@@ -2,64 +2,63 @@
 
 namespace App\Http\Controllers;
 
-use App\Filters\DriverFilters;
-use App\Models\DriverModel;
-use App\Services\DriverService;
+use App\Models\LeagueModel;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class DriverController extends Controller
+class LeagueController extends Controller
 {
     public function __construct(
-        protected DriverService $driverService
     ) {
     }
 
-    public function index(DriverFilters $filters): Collection
+    public function index(): Collection
     {
-        return DriverModel::filter($filters)->get();
+        return LeagueModel::all();
     }
 
     public function details(int $id): Builder|array|Collection|Model
     {
-        $query = DriverModel::query();
-        return $query->where(DriverModel::LEAGUE_ID, "=", \getenv("LEAGUE_ID"))
-            ->findOrFail($id);
+        $query = LeagueModel::query();
+        return $query->findOrFail($id);
     }
 
     public function update(int $id, Request $request): string
     {
-        $driver = DriverModel::query()->find($id);
-        if (!$driver instanceof DriverModel) {
+        $driver = LeagueModel::query()->find($id);
+        if (!$driver instanceof LeagueModel) {
             throw new NotFoundHttpException();
         }
         $driver->update($request->post());
 
-        return "DRIVER HAS BEEN UPDATED";
+        return "LEAGUE HAS BEEN UPDATED";
     }
 
+    /**
+     * @throws \Exception
+     */
     public function create(Request $request): string
     {
-        $driver = new DriverModel($request->post());
-        if (!$driver instanceof DriverModel) {
+        $driver = new LeagueModel($request->post());
+        if (!$driver instanceof LeagueModel) {
             throw new \Exception();
         }
         $driver->save();
 
-        return "DRIVER HAS BEEN SAVED";
+        return "LEAGUE HAS BEEN SAVED";
     }
 
     public function delete(int $id, Request $request): string
     {
-        $driver = DriverModel::query()->find($id);
-        if (!$driver instanceof DriverModel) {
+        $driver = LeagueModel::query()->find($id);
+        if (!$driver instanceof LeagueModel) {
             throw new NotFoundHttpException();
         }
         $driver->delete();
 
-        return "DRIVER HAS BEEN DELETED";
+        return "LEAGUE HAS BEEN DELETED";
     }
 }
