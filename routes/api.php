@@ -5,6 +5,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\RaceController;
 use App\Http\Controllers\SeasonController;
+use App\Http\Controllers\StandingsController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ConstructorController;
 use App\Http\Controllers\TrackController;
@@ -91,6 +92,12 @@ Route::get( '/team-data', [ConstructorController::class, 'index']);
  * tracks routes
  */
 Route::get( '/tracks', [TrackController::class, 'index']);
+
+/**
+ * standings routes
+ */
+Route::get( '/standings', [StandingsController::class, 'index']);
+Route::get( '/standingsDrivers', [StandingsController::class, 'getDriverStandings']);
 
 
 
