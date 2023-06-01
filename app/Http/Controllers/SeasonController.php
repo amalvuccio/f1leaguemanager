@@ -27,9 +27,7 @@ class SeasonController
 
     public function details(int $id): array|Model
     {
-        $query = SeasonModel::query();
-        return $query->where(SeasonModel::LEAGUE_ID, "=", \getenv("LEAGUE_ID"))
-            ->findOrFail($id);
+        return SeasonModel::query()->findOrFail($id);
     }
 
     public function update(int $id, Request $request): string

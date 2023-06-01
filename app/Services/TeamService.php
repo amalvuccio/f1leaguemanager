@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\DataTransferObjects\TeamDTO;
 use App\Models\ConstructorModel;
+use App\Models\ContractModel;
 use App\Models\DriverModel;
 use App\Models\SeasonModel;
 use App\Models\TeamModel;
@@ -10,6 +12,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use SebastianBergmann\CodeCoverage\Driver\Driver;
 
 class TeamService
 {
@@ -33,7 +36,28 @@ class TeamService
 
     public function listTeams(int $seasonId)
     {
+        $constructors = ConstructorModel::query()->get();
+        foreach ($constructors as $key => $constructor) {
+            $drivers = array();
+            $constructorDTO = $constructor;
+            $contracts = ContractModel::query()
+                ->where(ContractModel::SEASON_ID, "=", $seasonId)
+                ->where(ContractModel::CONSTRUCTOR_ID, "=", 3)->get();
+
+            $contracts = ContractModel::query()->find(1);
+            return $contracts->driver;
+            die();
+            $team = new TeamDTO($constructorDTO, $drivers);
+            return $team->jsonSerialize();
+        }
+
         return $this->driverTeamMappingService->mapTeams($seasonId);
+    }
+
+    public function getTeamById(int $id): Model
+    {
+        $builder = TeamModel::query();
+        return $builder->findOrFail($id);
     }
 
     public function getTeamBySeason(int $constructorId, int $seasonId): Collection|array

@@ -22,11 +22,11 @@ class CompetitionModel extends Model
 
     public function league(): BelongsTo
     {
-        return $this->belongsTo(LeagueModel::class);
+        return $this->belongsTo(LeagueModel::class, self::LEAGUE_ID);
     }
 
     public function season(): HasMany
     {
-        return $this->hasMany(SeasonModel::class);
+        return $this->hasMany(SeasonModel::class, SeasonModel::COMPETITION_ID);
     }
 }

@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Filters\DriverFilters;
+use App\Utility_Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DriverModel extends Model
@@ -28,16 +31,6 @@ class DriverModel extends Model
 
     protected $table = 'drivers';
 
-    protected $visible = [
-        'id',
-        'discordName',
-        'psnName',
-        'ingameName',
-        'platform',
-        'driverName',
-        'driverAge'
-    ];
-
     protected $fillable = [
         self::COMPETITION_ID,
         self::NAME_DISCORD,
@@ -48,29 +41,15 @@ class DriverModel extends Model
         self::AGE
     ];
 
-    protected array $maps = [
-        self::ID => 'id',
-        self::COMPETITION_ID => 'competition_id',
-        self::NAME_DISCORD => 'discordName',
-        self::NAME_PSN => 'psnName',
-        self::NAME_INGAME => 'ingameName',
-        self::PLATFORM => 'platform',
-        self::NAME => 'driverName',
-        self::AGE => 'driverAge',
-        self::CREATED_AT => 'createdAt',
-        self::UPDATED_AT => 'updatedAt',
-        self::DELETED_AT => 'deletedAt'
-    ];
-
-    protected $appends = [
-        'id',
-        'discordName',
-        'psnName',
-        'ingameName',
-        'platform',
-        'driverName',
-        'driverAge'
-    ];
+    /**
+     * Use the custom collection that allows tapping
+     *
+     * @return Utility_Collection
+     */
+    public function newCollection(array $models = array()): Utility_Collection
+    {
+        return new Utility_Collection($models);
+    }
 
     public function league(): BelongsTo
     {
@@ -82,9 +61,9 @@ class DriverModel extends Model
         return $this->belongsToMany(CompetitionModel::class);
     }
 
-    public function team(): BelongsTo
+    public function team(): HasOne
     {
-        return $this->belongsTo(TeamModel::class);
+        return $this->hasOne(TeamModel::class, TeamModel::DRIVER_ID);
     }
 
     public function getIdAttribute(): int

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Tests\Integration\Database\EloquentHasManyThroughTest\Team;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TeamController
@@ -25,9 +26,9 @@ class TeamController
         return $this->teamService->listTeams($seasonId);
     }
 
-    public function details(int $teamId, int $seasonId): Builder|array|Collection|Model
+    public function details(int $seasonId, int $teamId): Model
     {
-        return $this->teamService->getTeamBySeason($teamId, $seasonId);
+        return TeamModel::query()->findOrFail($teamId);
     }
 
     public function update(int $id, Request $request): string

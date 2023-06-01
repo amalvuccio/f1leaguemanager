@@ -19,7 +19,7 @@ class StandingsController extends Controller
         $this->standingsService = $standingsService;
     }
 
-    public function index(): false|\GdImage
+    public function index()
     {
         $this->standingsService->getTeamStandings();
     }

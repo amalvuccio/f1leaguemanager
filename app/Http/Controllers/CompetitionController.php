@@ -28,7 +28,7 @@ class CompetitionController
      */
     public function details(int $id): Builder|array|Collection|Model
     {
-        return CompetitionModel::query()->where(CompetitionModel::LEAGUE_ID, "=", \getenv('LEAGUE_ID'))->findOrFail($id);
+        return CompetitionModel::query()->findOrFail($id);
     }
 
     public function create()

@@ -15,7 +15,14 @@ class ConstructorModel extends Model
     public const UPDATED_AT = 'updated_at';
     public const DELETED_AT = 'deleted_at';
 
+    protected $visible = [
+        self::ID,
+        self::NAME
+    ];
+
     protected $table = 'constructors';
+
+
 
     public function getAllowedDriversAttribute(): int
     {

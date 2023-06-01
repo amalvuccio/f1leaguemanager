@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Filters\DriverFilters;
 use App\Models\DriverModel;
+use App\Models\TeamModel;
 use App\Services\DriverService;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,17 +26,14 @@ class DriverController extends Controller
 
     public function details(int $id): Builder|array|Collection|Model
     {
-        $query = DriverModel::query();
-        return $query->where(DriverModel::LEAGUE_ID, "=", \getenv("LEAGUE_ID"))
-            ->findOrFail($id);
+        var_dump(DriverModel::query()->findOrFail($id)->team);
+        die();
+        return DriverModel::query()->findOrFail($id)->with('team');
     }
 
     public function update(int $id, Request $request): string
     {
-        $driver = DriverModel::query()->find($id);
-        if (!$driver instanceof DriverModel) {
-            throw new NotFoundHttpException();
-        }
+        $driver = DriverModel::query()->findOrFail($id);
         $driver->update($request->post());
 
         return "DRIVER HAS BEEN UPDATED";
@@ -44,20 +42,14 @@ class DriverController extends Controller
     public function create(Request $request): string
     {
         $driver = new DriverModel($request->post());
-        if (!$driver instanceof DriverModel) {
-            throw new \Exception();
-        }
         $driver->save();
 
         return "DRIVER HAS BEEN SAVED";
     }
 
-    public function delete(int $id, Request $request): string
+    public function delete(int $id): string
     {
-        $driver = DriverModel::query()->find($id);
-        if (!$driver instanceof DriverModel) {
-            throw new NotFoundHttpException();
-        }
+        $driver = DriverModel::query()->findOrFail($id);
         $driver->delete();
 
         return "DRIVER HAS BEEN DELETED";

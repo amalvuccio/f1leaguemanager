@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CompetitionController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\RaceController;
@@ -82,11 +83,18 @@ Route::get('seasons/{seasonId}/teams/{teamId}', [TeamController::class, 'details
 Route::put( 'seasons/{seasonId}/teams/{teamId}', [TeamController::class, 'update']);
 Route::delete( 'seasons/{seasonId}/teams/{teamId}', [TeamController::class, 'delete']);
 
+/**
+ * contracts routes
+ */
+Route::get( '/seasons/{seasonId}/contracts', [ContractController::class, 'index']);
+Route::post( '/contracts', [ContractController::class, 'create']);
+
+
 
 /**
- * team data routes
+ * constructor routes
  */
-Route::get( '/team-data', [ConstructorController::class, 'index']);
+Route::get( '/constructors', [ConstructorController::class, 'index']);
 
 /**
  * tracks routes
