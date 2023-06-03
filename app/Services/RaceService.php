@@ -21,14 +21,14 @@ class RaceService
     {
         $race = RaceModel::query()->whereHas('track',
             function ($query) use ($name) {
-                $query->where('country', '=', $name);
+                $query->where('country', 'LIKE', $name . '%');
             }
         )->first();
 
         if (!$race) {
             $race = RaceModel::query()->whereHas('track',
                 function ($query) use ($name) {
-                    $query->where('city', '=', $name);
+                    $query->where('city', 'LIKE', $name . '%');
                 }
             )->first();
         }
@@ -36,7 +36,7 @@ class RaceService
         if (!$race) {
             $race = RaceModel::query()->whereHas('track',
                 function ($query) use ($name) {
-                    $query->where('name', '=', $name);
+                    $query->where('name', 'LIKE', $name . '%');
                 }
             )->first();
         }

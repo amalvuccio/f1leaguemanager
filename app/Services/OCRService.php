@@ -13,12 +13,13 @@ use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Request;
 use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use function PHPUnit\Framework\assertDirectoryDoesNotExist;
 
 class OCRService
 {
-    public function __construct(protected RaceService $raceService)
+    public function __construct(protected RaceService $raceService, protected RaceResultService $raceResultService)
     {
 
     }
@@ -47,7 +48,7 @@ class OCRService
         $response = $client->send($request);
     }
 
-    public function getRaceData(Request $request)
+    public function getRaceData($raceId, Request $request)
     {
         $ocrData = $this->clearText($request->post());
         $driversOCR = $ocrData['drivers'];
@@ -55,8 +56,8 @@ class OCRService
         $gridPosOCR = $ocrData['gridPos'];
         //$qualiPosOCR = $this->clearText($request->get('qualiPos'));
         $personalBestLaps = $ocrData['personalBestLaps'];
-        //$pitStops = $this->clearText($request->get('pitStops'));
-        //$raceTime = $this->clearText($request->get('raceTime'));
+        $pitStops = $ocrData['pitStops'];
+        $raceTime = $ocrData['raceTime'];
         $timePens = $ocrData['timePens'];
 
         $drivers = $this->getDrivers($driversOCR);
@@ -67,16 +68,19 @@ class OCRService
             'teams' => $teams,
             'gridPos' => $gridPosOCR,
             'personalBestLaps' => $personalBestLaps,
-            'timePens' => $timePens
+            'timePens' => $timePens,
+            'raceTime' => $raceTime,
+            'pitStops' => $pitStops
         ]);
 
-        $race = $this->raceService->getRaceByTrack($request->get('track'));
         $raceResults = new Utility_Collection();
 
         foreach ($drivers as $key => $driver) {
+            if ($raceTime[$key])
+
             $resultData = array(
                 RaceResultModel::LEAGUE_ID => 1,
-                RaceResultModel::RACE_ID => $race->id,
+                RaceResultModel::RACE_ID => $raceId,
                 RaceResultModel::DRIVER_ID => $driver->id,
                 RaceResultModel::CONSTRUCTOR_ID => $teams[$key]->id,
                 RaceResultModel::POS_QUALI => (int)$gridPosOCR[$key],
@@ -85,15 +89,33 @@ class OCRService
                 RaceResultModel::PERSONAL_BEST_LAP => $personalBestLaps[$key],
                 RaceResultModel::TIME_PEN => (int)$timePens[$key],
                 RaceResultModel::FASTEST_LAP => 0,
-                RaceResultModel::DNF => 0,
-                RaceResultModel::DSQ => 0
+                RaceResultModel::DNF => ($raceTime[$key] === 'DNF') ? 1 : 0,
+                RaceResultModel::DSQ => ($raceTime[$key] === 'DSQ') ? 1 : 0,
+                RaceResultModel::RACETIME => $raceTime[$key],
+                RaceResultModel::PITSTOPS => (int)$pitStops[$key]
             );
+
+            $this->validateResultData($resultData);
 
             $raceResult = new RaceResultModel($resultData);
             $raceResult->save();
             $raceResults->push($raceResult);
         }
         return $raceResults;
+    }
+
+    private function getDataFromCSV($csvData)
+    {
+
+    }
+
+    private function validateResultData(array $resultData)
+    {
+        $result = $this->raceResultService->getRaceResultForDriver($resultData[RaceResultModel::RACE_ID], $resultData[RaceResultModel::DRIVER_ID]);
+
+        if ($result instanceof RaceResultModel) {
+            throw new BadRequestException("RESULT_FOR_DRIVER_WITH_ID_ " . $resultData[RaceResultModel::DRIVER_ID] . " _ALREADY_EXISTS");
+        }
     }
 
     private function getTimePens(array $timePens, array $raceTimes)
@@ -129,9 +151,7 @@ class OCRService
                     $data[$dataType][$key] = str_replace("I ", "", $str);
                 }
 
-                $pattern = '/\s*/m';
-                $replace = '';
-                $data[$dataType][$key] = preg_replace($pattern, $replace, $data[$dataType][$key]);
+                $data[$dataType][$key] = $this->rmvWhiteSpaces($str);
 
                 if (
                     str_contains($str, "FORMULA 1") |
@@ -145,21 +165,20 @@ class OCRService
                 }
 
                 if ($dataType === 'timePens') {
-                    if (str_contains($data[$dataType][$key], "+") && str_contains($data[$dataType][$key], "sek.")) {
-                        $start = strpos($data[$dataType][$key], "+") + 1;
-                        $end = strpos($data[$dataType][$key], "sek.") - 4;
-                        $data[$dataType][$key] = substr($data[$dataType][$key], $start, $end);
+                    if (str_contains($str, "+") && str_contains($str, "sek.")) {
+                        $start = strpos($str, "+") + 1;
+                        $end = strpos($str, "sek.") - 4;
+                        $data[$dataType][$key] = substr($str, $start, $end);
                     } elseif (
-                        str_contains($data[$dataType][$key], "Runde") |
-                        str_contains($data[$dataType][$key], "DNF") |
-                        str_contains($data[$dataType][$key], "DSQ")
+                        str_contains($str, "Runde") |
+                        str_contains($str, "DNF") |
+                        str_contains($str, "DSQ")
                     ) {
                         continue;
                     } else {
                         $data[$dataType][$key] = null;
                     }
                 }
-
             }
         }
         return $data;
@@ -198,12 +217,16 @@ class OCRService
     {
         $constructors = new Utility_Collection();
 
-        foreach ($teamsOCR as $team) {
-            $team = $this->rmvWhiteSpaces($team);
-            $constructor = ConstructorModel::query()->where(ConstructorModel::NAME_OCR, "LIKE", '%' .$team. '%')->first();
+        foreach ($teamsOCR as $teamOCR) {
+            $teamOCR = $this->rmvWhiteSpaces($teamOCR);
+            $constructor = ConstructorModel::query()->where(ConstructorModel::NAME_OCR, "LIKE", '%' .$teamOCR. '%')->first();
 
-            if ($constructor) {
+            if ($constructor instanceof ConstructorModel) {
                 $constructors->push($constructor);
+            } else {
+                Log::channel('amal')->error('TEAM NOT FOUND', [
+                    $teamOCR
+                ]);
             }
         }
 

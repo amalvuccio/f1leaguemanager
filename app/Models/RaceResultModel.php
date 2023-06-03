@@ -23,6 +23,8 @@ class RaceResultModel extends Model
     public const FASTEST_LAP = 'fastest_lap';
     public const DNF = 'dnf';
     public const DSQ = 'dsq';
+    public const RACETIME = 'race_time';
+    public const PITSTOPS = 'pit_stops';
     public const CREATED_AT = 'created_at';
     public const UPDATED_AT = 'updated_at';
     public const DELETED_AT = 'deleted_at';
@@ -30,7 +32,6 @@ class RaceResultModel extends Model
     public const DRIVER = 'driver';
     public const CONSTRUCTOR = 'constructor';
     public const RACE = 'race';
-
 
     protected $table = 'race_results';
 
@@ -46,7 +47,9 @@ class RaceResultModel extends Model
         self::TIME_PEN,
         self::FASTEST_LAP,
         self::DNF,
-        self::DSQ
+        self::DSQ,
+        self::RACETIME,
+        self::PITSTOPS
     ];
 
     protected $visible = [
@@ -59,6 +62,8 @@ class RaceResultModel extends Model
         self::FASTEST_LAP,
         self::DNF,
         self::DSQ,
+        self::RACETIME,
+        self::PITSTOPS,
         self::RACE,
         self::DRIVER,
         self::CONSTRUCTOR

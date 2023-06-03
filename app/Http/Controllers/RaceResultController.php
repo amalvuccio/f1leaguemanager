@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DriverModel;
 use App\Models\RaceResultModel;
 use App\Services\OCRService;
 use App\Services\RaceResultService;
 use App\Utility_Collection;
+use http\QueryString;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class RaceResultController
 {
@@ -15,12 +18,18 @@ class RaceResultController
     {
     }
 
-    public function index($raceId): Utility_Collection
+    public function index($raceId, Request $request): Utility_Collection
     {
-        /** @var Utility_Collection */
-        return $this->raceResultService->getRaceResultByRaceId($raceId);
+        $query = RaceResultModel::query()->where(RaceResultModel::RACE_ID, "=", $raceId);
 
-        //return RaceResultModel::query()->where(RaceResultModel::RACE_ID, "=", $raceId)->get();
+        if ($request->has('driverDiscordName')) {
+            $query->whereHas('driver', function ($query) use ($request) {
+                $query->where(DriverModel::NAME_DISCORD, 'LIKE', $request->get('driverDiscordName') . '%');
+            });
+        }
+
+        /** @var Utility_Collection */
+        return $query->get();
     }
 
     public function details($resultId): Collection
@@ -30,9 +39,12 @@ class RaceResultController
 
     public function create($raceId, Request $request)
     {
-        return $this->OCRService->getRaceData($request);
-        //$this->raceResultService->createRaceResult($raceId, $request);
+        $result = $this->raceResultService->getRaceResultByRaceId($raceId);
 
-        //return "RACE RESUlT HAS BEEN SAVED";
+        if ($result->count() > 1 ) {
+            throw new BadRequestException("THERE ARE ALREADY RESULTS FOR THIS RACE");
+        };
+
+        return $this->OCRService->getRaceData($raceId, $request);
     }
 }
