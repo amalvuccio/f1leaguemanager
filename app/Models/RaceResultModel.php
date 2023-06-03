@@ -18,6 +18,7 @@ class RaceResultModel extends Model
     public const POS_QUALI = 'pos_quali';
     public const POS_GRID = 'pos_grid';
     public const POS_RACE = 'pos_race';
+    public const PERSONAL_BEST_LAP = 'personal_best_lap';
     public const TIME_PEN = 'time_pen';
     public const FASTEST_LAP = 'fastest_lap';
     public const DNF = 'dnf';
@@ -41,6 +42,7 @@ class RaceResultModel extends Model
         self::POS_QUALI,
         self::POS_GRID,
         self::POS_RACE,
+        self::PERSONAL_BEST_LAP,
         self::TIME_PEN,
         self::FASTEST_LAP,
         self::DNF,
@@ -52,6 +54,7 @@ class RaceResultModel extends Model
         self::POS_QUALI,
         self::POS_GRID,
         self::POS_RACE,
+        self::PERSONAL_BEST_LAP,
         self::TIME_PEN,
         self::FASTEST_LAP,
         self::DNF,
@@ -136,6 +139,11 @@ class RaceResultModel extends Model
     public function getPosRaceAttribute(): ?string
     {
         return $this->attributes[self::POS_RACE];
+    }
+
+    public function getPersonalBestLapAttribute(): ?string
+    {
+        return $this->attributes[self::PERSONAL_BEST_LAP];
     }
 
     public function getTimePenAttribute(): ?string

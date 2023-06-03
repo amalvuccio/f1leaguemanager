@@ -12,11 +12,17 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Request;
 use GuzzleHttp\Psr7\Request as GuzzleRequest;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use function PHPUnit\Framework\assertDirectoryDoesNotExist;
 
 class OCRService
 {
+    public function __construct(protected RaceService $raceService)
+    {
+
+    }
+
     public function getTextFromImage(Request $request, $img){
         /**
          * todo: check if implementation is possible
@@ -43,29 +49,41 @@ class OCRService
 
     public function getRaceData(Request $request)
     {
-        $text = $request->post();
-        $text['drivers'] = $this->clearText($text['drivers']);
-        $text['teams'] = $this->clearText($text['teams']);
-        $text['gridPos'] = $this->clearText($text['gridPos']);
+        $ocrData = $this->clearText($request->post());
+        $driversOCR = $ocrData['drivers'];
+        $teamsOCR = $ocrData['teams'];
+        $gridPosOCR = $ocrData['gridPos'];
+        //$qualiPosOCR = $this->clearText($request->get('qualiPos'));
+        $personalBestLaps = $ocrData['personalBestLaps'];
+        //$pitStops = $this->clearText($request->get('pitStops'));
+        //$raceTime = $this->clearText($request->get('raceTime'));
+        $timePens = $ocrData['timePens'];
 
+        $drivers = $this->getDrivers($driversOCR);
+        $teams = $this->getTeams($teamsOCR);
 
-        $drivers = $this->getDrivers($text['drivers']);
+        $this->assertCount((int)$request->get('driverCount'), [
+            'drivers' => $drivers,
+            'teams' => $teams,
+            'gridPos' => $gridPosOCR,
+            'personalBestLaps' => $personalBestLaps,
+            'timePens' => $timePens
+        ]);
 
-        $teams = $this->getTeams($text['teams']);
-        $gridPos = $text['gridPos'];
-
+        $race = $this->raceService->getRaceByTrack($request->get('track'));
         $raceResults = new Utility_Collection();
 
         foreach ($drivers as $key => $driver) {
             $resultData = array(
                 RaceResultModel::LEAGUE_ID => 1,
-                RaceResultModel::RACE_ID => 6,
+                RaceResultModel::RACE_ID => $race->id,
                 RaceResultModel::DRIVER_ID => $driver->id,
                 RaceResultModel::CONSTRUCTOR_ID => $teams[$key]->id,
-                RaceResultModel::POS_QUALI => 1,
-                RaceResultModel::POS_GRID => $gridPos[$key],
-                RaceResultModel::POS_RACE => $key+1,
-                RaceResultModel::TIME_PEN => 0,
+                RaceResultModel::POS_QUALI => (int)$gridPosOCR[$key],
+                RaceResultModel::POS_GRID => (int)$gridPosOCR[$key],
+                RaceResultModel::POS_RACE => (int)$key+1,
+                RaceResultModel::PERSONAL_BEST_LAP => $personalBestLaps[$key],
+                RaceResultModel::TIME_PEN => (int)$timePens[$key],
                 RaceResultModel::FASTEST_LAP => 0,
                 RaceResultModel::DNF => 0,
                 RaceResultModel::DSQ => 0
@@ -73,67 +91,78 @@ class OCRService
 
             $raceResult = new RaceResultModel($resultData);
             $raceResult->save();
+            $raceResults->push($raceResult);
         }
-
-        /*
-        foreach ($text as $key => $str) {
-            if (str_contains($text[$key], "GRANDPRIXVON")) {
-                //$raceTrack = $this->getRaceTrack($text[$key]);
-                continue;
-                //return $raceTrack;
-            }
-
-            if (is_numeric($str)) {
-                var_dump($str);
-                continue;
-            }
-
-            if (str_contains($str, ":")) {
-                continue;
-            }
-
-            if (str_contains($str, "+")) {
-                continue;
-            }
-        }
-        */
+        return $raceResults;
     }
 
-    private function clearText(string $text)
+    private function getTimePens(array $timePens, array $raceTimes)
     {
-        $text = explode("\n", $text);
-        foreach ($text as $key => $str) {
-
-            if (str_contains($str, "|")) {
-                $text[$key] = str_replace("|", "", $str);
-            }
-            if (str_contains($str, "I ")) {
-                $text[$key] = str_replace("I ", "", $str);
-            }
-
-
-            $pattern = '/\s*/m';
-            $replace = '';
-            $text[$key] = preg_replace( $pattern, $replace, $text[$key]);
-
-            /*
-            if (str_contains($str, "RonluZZZ")) {
-                $text[$key] = "Ronlu222";
-            }
-            */
-
-            if (
-                str_contains($str, "FORMULA 1") |
-                str_contains($str, "POS. FAHRER") |
-                str_contains($str, "TEAM") |
-                str_contains($str, "GRID") |
-                str_contains($str, "STOPPS BESTE") |
-                str_contains($str, "ZEIT")
-            ) {
-                unset($text[$key]);
+        foreach ($timePens as $key => $timePen) {
+            if ($timePen === $raceTimes[$key]) {
+                $timePens[$key] = "";
             }
         }
-        return $text;
+        return $timePens;
+    }
+
+    private function assertCount($driverCount, array $data)
+    {
+        foreach ($data as $key => $row) {
+            $count = count($row);
+            if ($driverCount !== $count) {
+                throw new \Exception($key . " DATA_COUNT_DOESNT_MATCH_EXPECTED_COUNT " . " EXPECTED_COUNT_IS " . $driverCount . " DATA_COUNT_IS " . $count);
+            }
+        }
+    }
+
+    private function clearText($data)
+    {
+        foreach ($data as $dataType => $column) {
+            $data[$dataType] = explode("\n", $column);
+
+            foreach ($data[$dataType] as $key => $str) {
+                if (str_contains($str, "|")) {
+                    $data[$dataType][$key] = str_replace("|", "", $str);
+                }
+                if (str_contains($str, "I ")) {
+                    $data[$dataType][$key] = str_replace("I ", "", $str);
+                }
+
+                $pattern = '/\s*/m';
+                $replace = '';
+                $data[$dataType][$key] = preg_replace($pattern, $replace, $data[$dataType][$key]);
+
+                if (
+                    str_contains($str, "FORMULA 1") |
+                    str_contains($str, "POS. FAHRER") |
+                    str_contains($str, "TEAM") |
+                    str_contains($str, "GRID") |
+                    str_contains($str, "STOPPS BESTE") |
+                    str_contains($str, "ZEIT")
+                ) {
+                    unset($data[$dataType][$key]);
+                }
+
+                if ($dataType === 'timePens') {
+                    if (str_contains($data[$dataType][$key], "+") && str_contains($data[$dataType][$key], "sek.")) {
+                        $start = strpos($data[$dataType][$key], "+") + 1;
+                        $end = strpos($data[$dataType][$key], "sek.") - 4;
+                        $data[$dataType][$key] = substr($data[$dataType][$key], $start, $end);
+                    } elseif (
+                        str_contains($data[$dataType][$key], "Runde") |
+                        str_contains($data[$dataType][$key], "DNF") |
+                        str_contains($data[$dataType][$key], "DSQ")
+                    ) {
+                        continue;
+                    } else {
+                        $data[$dataType][$key] = null;
+                    }
+                }
+
+            }
+        }
+        return $data;
     }
 
     public function getRaceTrack($text)
@@ -185,14 +214,17 @@ class OCRService
     {
         $drivers = new Utility_Collection();
 
-        foreach ($driversOCR as $driver) {
-            $str = substr($driver, 0, strlen($driver)/3*2);
+        foreach ($driversOCR as $driverOCR) {
+            $str = substr($driverOCR, 0, strlen($driverOCR)/3*2);
             $driver = DriverModel::query()->where(DriverModel::NAME_INGAME, "LIKE", $str. '%')->first();
             if ($driver instanceof DriverModel) {
                 $drivers->push($driver);
+            } else {
+                Log::channel('amal')->error('DRIVER NOT FOUND', [
+                    $driverOCR
+                ]);
             }
         }
-
         return $drivers;
     }
 
