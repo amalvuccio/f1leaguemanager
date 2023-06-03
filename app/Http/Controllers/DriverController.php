@@ -26,8 +26,6 @@ class DriverController extends Controller
 
     public function details(int $id): Builder|array|Collection|Model
     {
-        var_dump(DriverModel::query()->findOrFail($id)->team);
-        die();
         return DriverModel::query()->findOrFail($id)->with('team');
     }
 

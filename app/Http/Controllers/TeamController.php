@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTransferObjects\TeamDTO;
 use App\Models\TeamModel;
 use App\Services\TeamService;
+use App\Utility_Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -26,9 +28,9 @@ class TeamController
         return $this->teamService->listTeams($seasonId);
     }
 
-    public function details(int $seasonId, int $teamId): Model
+    public function details(int $seasonId, int $teamId): TeamModel
     {
-        return TeamModel::query()->findOrFail($teamId);
+        return $this->teamService->getTeamById($teamId, $seasonId);
     }
 
     public function update(int $id, Request $request): string

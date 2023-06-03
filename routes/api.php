@@ -5,6 +5,7 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\RaceController;
+use App\Http\Controllers\RaceResultController;
 use App\Http\Controllers\SeasonController;
 use App\Http\Controllers\StandingsController;
 use App\Http\Controllers\TeamController;
@@ -57,11 +58,14 @@ Route::post( 'seasons', [SeasonController::class, 'create']);
  * races routes
  */
 Route::get( 'seasons/{seasonId}/races', [RaceController::class, 'index']);
+Route::post( 'seasons/{seasonId}/races', [RaceController::class, 'create']);
 
 /**
  * race results routes
  */
-Route::get( 'races/{raceId}/race-results', [RaceController::class, 'index']);
+Route::get( 'races/{raceId}/race-results', [RaceResultController::class, 'index']);
+Route::get( 'races/{raceId}/race-results/{id}', [RaceResultController::class, 'details']);
+Route::post( 'races/{raceId}/race-results', [RaceResultController::class, 'create']);
 
 /**
  * Drivers Routes

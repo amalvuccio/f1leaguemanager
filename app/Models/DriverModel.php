@@ -8,30 +8,33 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DriverModel extends Model
 {
     use SoftDeletes, HasFactory;
+
     public const ID = 'id';
     public const LEAGUE_ID = 'league_id';
     public const COMPETITION_ID = 'competition_id';
-
     public const NAME_DISCORD = 'name_discord';
     public const NAME_PSN = 'name_psn';
     public const NAME_INGAME = 'name_ingame';
     public const PLATFORM = 'platform';
     public const NAME = 'name';
     public const AGE = 'age';
+
     public const CREATED_AT = 'created_at';
+
     public const UPDATED_AT = 'updated_at';
+
     public const DELETED_AT = 'deleted_at';
 
     protected $table = 'drivers';
 
     protected $fillable = [
+        self::LEAGUE_ID,
         self::COMPETITION_ID,
         self::NAME_DISCORD,
         self::NAME_PSN,
@@ -44,9 +47,10 @@ class DriverModel extends Model
     /**
      * Use the custom collection that allows tapping
      *
+     * @param array $models
      * @return Utility_Collection
      */
-    public function newCollection(array $models = array()): Utility_Collection
+    public function newCollection(array $models = []): Utility_Collection
     {
         return new Utility_Collection($models);
     }

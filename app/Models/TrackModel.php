@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Utility_Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -17,4 +18,22 @@ class TrackModel extends Model
     public const DELETED_AT = 'deleted_at';
 
     protected $table = 'tracks';
+
+    protected $visible = [
+        self::ID,
+        self::NAME,
+        self::CITY,
+        self::COUNTRY
+    ];
+
+    /**
+     * Use the custom collection that allows tapping
+     *
+     * @param array $models
+     * @return Utility_Collection
+     */
+    public function newCollection(array $models = []): Utility_Collection
+    {
+        return new Utility_Collection($models);
+    }
 }

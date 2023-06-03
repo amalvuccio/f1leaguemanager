@@ -6,7 +6,6 @@ use App\Utility_Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +13,9 @@ use Illuminate\Support\Facades\DB;
 class ContractModel extends Model
 {
     use SoftDeletes, HasFactory;
+
     public const ID = 'id';
+
     public const LEAGUE_ID = 'league_id';
     public const SEASON_ID = 'season_id';
     public const DRIVER_ID = 'driver_id';
@@ -23,7 +24,9 @@ class ContractModel extends Model
     public const LENGTH = 'length';
 
     public const CREATED_AT = 'created_at';
+
     public const UPDATED_AT = 'updated_at';
+
     public const DELETED_AT = 'deleted_at';
     public const CONSTRUCTOR = "constructor";
     public const DRIVER = "driver";
@@ -53,6 +56,7 @@ class ContractModel extends Model
     /**
      * Use the custom collection that allows tapping
      *
+     * @param array $models
      * @return Utility_Collection
      */
     public function newCollection(array $models = array()): Utility_Collection

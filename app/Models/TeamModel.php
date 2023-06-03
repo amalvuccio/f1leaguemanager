@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Utility_Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,37 +25,55 @@ class TeamModel extends Model
 
     protected $appends = [
         'constructor',
-        'driver'
+        'driver_list'
     ];
 
     protected $visible = [
         self::CONSTRUCTOR,
         self::DRIVER_LIST
     ];
+    private ConstructorModel $constructor;
+    private Utility_Collection $driverlist;
 
+    public function __construct(ConstructorModel $constructor, Utility_Collection $driverlist)
+    {
+        $this->constructor = $constructor;
+        $this->driverlist = $driverlist;
+    }
+
+    /**
+     * Use the custom collection that allows tapping
+     *
+     * @param array $models
+     * @return Utility_Collection
+     */
+    public function newCollection(array $models = []): Utility_Collection
+    {
+        return new Utility_Collection($models);
+    }
 
     public function season(): BelongsTo
     {
         return $this->belongsTo(SeasonModel::class);
     }
 
-    public function driverList(): HasOne
-    {
-        return $this->hasOne(DriverModel::class, DriverModel::ID);
-    }
-
-    public function constructor(): HasOne
-    {
-        return $this->hasOne(ConstructorModel::class, ConstructorModel::ID);
-    }
-
     public function getConstructorAttribute()
     {
-        return $this->constructor()->get();
+        return $this->constructor;
     }
 
-    public function getDriverAttribute()
+    public function getDriverListAttribute()
     {
-        return $this->driver()->get();
+        return $this->driverlist;
+    }
+
+    public function setConstructorAttribute(ConstructorModel $constructorModel)
+    {
+        $this->constructor = $constructorModel;
+    }
+
+    public function setDriverListAttribute(Utility_Collection $driverModel)
+    {
+        $this->driverlist = $driverModel;
     }
 }

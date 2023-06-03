@@ -8,10 +8,12 @@ use App\Models\ContractModel;
 use App\Models\DriverModel;
 use App\Models\SeasonModel;
 use App\Models\TeamModel;
+use App\Utility_Collection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Phalcon\Flash\Session;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
 
 class TeamService
@@ -19,8 +21,6 @@ class TeamService
     private DriverService $driverService;
     private SeasonService $seasonService;
     private ConstructorService $constructorService;
-
-    private DriverTeamMappingService $driverTeamMappingService;
 
     public function __construct(
         DriverService $driverService,
@@ -34,48 +34,32 @@ class TeamService
         $this->driverTeamMappingService = $driverTeamMappingService;
     }
 
-    public function listTeams(int $seasonId)
+    public function listTeams(int $seasonId): Utility_Collection
     {
+        $teamCollection = new Utility_Collection();
         $constructors = ConstructorModel::query()->get();
         foreach ($constructors as $key => $constructor) {
-            $drivers = array();
-            $constructorDTO = $constructor;
             $contracts = ContractModel::query()
                 ->where(ContractModel::SEASON_ID, "=", $seasonId)
-                ->where(ContractModel::CONSTRUCTOR_ID, "=", 3)->get();
+                ->where(ContractModel::CONSTRUCTOR_ID, "=", $constructor->id)->get();
 
-            $contracts = ContractModel::query()->find(1);
-            return $contracts->driver;
-            die();
-            $team = new TeamDTO($constructorDTO, $drivers);
-            return $team->jsonSerialize();
+            $teamCollection->push(new TeamModel($constructor, $contracts->driver));
         }
 
-        return $this->driverTeamMappingService->mapTeams($seasonId);
+        return $teamCollection;
     }
 
-    public function getTeamById(int $id): Model
+    public function getTeamById(int $constructorId, $seasonId): TeamModel
     {
-        $builder = TeamModel::query();
-        return $builder->findOrFail($id);
-    }
+        /** @var ConstructorModel $constructor */
+        $constructor = ConstructorModel::query()->findOrFail($constructorId);
 
-    public function getTeamBySeason(int $constructorId, int $seasonId): Collection|array
-    {
-        $builder = TeamModel::query();
-        return $builder->where(TeamModel::LEAGUE_ID, "=", \getenv('LEAGUE_ID'))
-            ->where(TeamModel::SEASON_ID, "=", $seasonId)
-            ->where(TeamModel::CONSTRUCTOR_ID, "=", $constructorId)
-            ->get();
-    }
+        /** @var Utility_Collection $contracts */
+        $contracts = ContractModel::query()
+            ->where(ContractModel::SEASON_ID, "=", $seasonId)
+            ->where(ContractModel::CONSTRUCTOR_ID, "=", $constructor->id)->get();
 
-    public function getTeamMembersBySeason(int $constructorId, int $seasonId): int
-    {
-        $builder = TeamModel::query();
-        return $builder->where(TeamModel::LEAGUE_ID, "=", \getenv('LEAGUE_ID'))
-            ->where(TeamModel::SEASON_ID, "=", $seasonId)
-            ->where(TeamModel::CONSTRUCTOR_ID, "=", $constructorId)
-            ->count();
+        return new TeamModel($constructor, $contracts->driver);
     }
 
     /**
@@ -83,6 +67,10 @@ class TeamService
      */
     public function getTeamByDriver(int $driverId, int $seasonId): Model|null
     {
+        /**
+         * todo
+         */
+
         $builder = TeamModel::query();
         return $builder->where(TeamModel::LEAGUE_ID, "=", \getenv('LEAGUE_ID'))
             ->where(TeamModel::SEASON_ID, "=", $seasonId)
