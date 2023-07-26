@@ -12,6 +12,8 @@ class ConstructorModel extends Model
     public const ID = 'id';
     public const NAME = 'name';
     public const NAME_OCR = 'name_ocr';
+
+    public const NAME_SHORT = 'name_short';
     public const ALLOWED_DRIVERS = 'allowed_drivers';
     public const CREATED_AT = 'created_at';
     public const UPDATED_AT = 'updated_at';
@@ -19,7 +21,8 @@ class ConstructorModel extends Model
 
     protected $visible = [
         self::ID,
-        self::NAME
+        self::NAME,
+        self::NAME_SHORT
     ];
 
     protected $table = 'constructors';
@@ -39,6 +42,11 @@ class ConstructorModel extends Model
     public function getIdAttribute(): int
     {
         return $this->attributes[self::ID];
+    }
+
+    public function getNameShortAttribute(): string
+    {
+        return $this->attributes[self::NAME_SHORT];
     }
 
     public function getAllowedDriversAttribute(): int

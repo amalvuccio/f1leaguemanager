@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CalenderController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DriverController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\RaceController;
 use App\Http\Controllers\RaceResultController;
 use App\Http\Controllers\SeasonController;
 use App\Http\Controllers\StandingsController;
+use App\Http\Controllers\StartingGridController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ConstructorController;
 use App\Http\Controllers\TrackController;
@@ -111,5 +113,9 @@ Route::get( '/tracks', [TrackController::class, 'index']);
 Route::get( '/standings', [StandingsController::class, 'index']);
 Route::get( '/standingsDrivers', [StandingsController::class, 'getDriverStandings']);
 
+
+Route::post('/calender', [CalenderController::class, 'create']);
+
+Route::get( '/starting-grid', [StartingGridController::class, 'index']);
 
 

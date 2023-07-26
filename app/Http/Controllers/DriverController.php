@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use SebastianBergmann\CodeCoverage\Driver\Driver;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DriverController extends Controller
@@ -39,6 +40,13 @@ class DriverController extends Controller
 
     public function create(Request $request): string
     {
+        /*
+        $data = $request->post();
+        foreach ($data as $driver) {
+            $driverModel = $this->driverService->getDriverByName($driver);
+            $this->driverService->createDriver($driverModel);
+        }
+        */
         $driver = new DriverModel($request->post());
         $driver->save();
 

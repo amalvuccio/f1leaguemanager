@@ -18,27 +18,28 @@ class TeamModel extends Model
     use SoftDeletes, HasFactory;
 
     public const CONSTRUCTOR = "constructor";
-    public const DRIVER_LIST = "driver_list";
+    public const DRIVERS = "drivers";
 
 
     protected $table = 'teams';
 
     protected $appends = [
         'constructor',
-        'driver_list'
+        'drivers'
     ];
 
     protected $visible = [
         self::CONSTRUCTOR,
-        self::DRIVER_LIST
+        self::DRIVERS
     ];
-    private ConstructorModel $constructor;
-    private Utility_Collection $driverlist;
 
-    public function __construct(ConstructorModel $constructor, Utility_Collection $driverlist)
+    private ConstructorModel $constructor;
+    private Utility_Collection $drivers;
+
+    public function __construct(ConstructorModel $constructor, Utility_Collection $drivers)
     {
         $this->constructor = $constructor;
-        $this->driverlist = $driverlist;
+        $this->drivers = $drivers;
     }
 
     /**
@@ -62,9 +63,9 @@ class TeamModel extends Model
         return $this->constructor;
     }
 
-    public function getDriverListAttribute()
+    public function getDriversAttribute()
     {
-        return $this->driverlist;
+        return $this->drivers;
     }
 
     public function setConstructorAttribute(ConstructorModel $constructorModel)
@@ -72,8 +73,8 @@ class TeamModel extends Model
         $this->constructor = $constructorModel;
     }
 
-    public function setDriverListAttribute(Utility_Collection $driverModel)
+    public function setDriversAttribute(Utility_Collection $driverModel)
     {
-        $this->driverlist = $driverModel;
+        $this->drivers = $driverModel;
     }
 }

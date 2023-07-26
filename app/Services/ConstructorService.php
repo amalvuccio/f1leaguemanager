@@ -15,4 +15,9 @@ class ConstructorService
     {
         return ConstructorModel::query()->where(ConstructorModel::ID, "=", $id)->first();
     }
+
+    public function getConstructorByName(string $name): Model|null
+    {
+        return ConstructorModel::query()->where(ConstructorModel::NAME, 'LIKE', $name . '%')->first();
+    }
 }

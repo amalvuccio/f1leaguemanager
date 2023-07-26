@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-class CalenderModel extends \Illuminate\Database\Eloquent\Model
+use Illuminate\Database\Eloquent\Model;
+
+class CalenderModel extends Model
 {
 
 }

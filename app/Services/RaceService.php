@@ -3,8 +3,6 @@
 namespace App\Services;
 
 use App\Models\RaceModel;
-use App\Utility_Collection;
-use function PHPUnit\TestFixture\func;
 
 class RaceService
 {

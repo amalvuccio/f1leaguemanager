@@ -5,16 +5,9 @@ namespace App\Services;
 use App\DataTransferObjects\TeamDTO;
 use App\Models\ConstructorModel;
 use App\Models\ContractModel;
-use App\Models\DriverModel;
-use App\Models\SeasonModel;
 use App\Models\TeamModel;
 use App\Utility_Collection;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Phalcon\Flash\Session;
-use SebastianBergmann\CodeCoverage\Driver\Driver;
 
 class TeamService
 {
@@ -25,13 +18,11 @@ class TeamService
     public function __construct(
         DriverService $driverService,
         SeasonService $seasonService,
-        ConstructorService $constructorService,
-        DriverTeamMappingService $driverTeamMappingService
+        ConstructorService $constructorService
     ) {
         $this->driverService = $driverService;
         $this->seasonService = $seasonService;
         $this->constructorService = $constructorService;
-        $this->driverTeamMappingService = $driverTeamMappingService;
     }
 
     public function listTeams(int $seasonId): Utility_Collection
@@ -47,6 +38,19 @@ class TeamService
         }
 
         return $teamCollection;
+    }
+
+    public function getTeamByConstructor(string $constructorName, int $seasonId): TeamModel
+    {
+        /** @var ConstructorModel $constructor */
+        $constructor = ConstructorModel::query()->where('name_short', '=', $constructorName)->first();
+
+        /** @var Utility_Collection $contracts */
+        $contracts = ContractModel::query()
+            ->where(ContractModel::SEASON_ID, "=", $seasonId)
+            ->where(ContractModel::CONSTRUCTOR_ID, "=", $constructor->id)->get();
+
+        return new TeamModel($constructor, $contracts->driver);
     }
 
     public function getTeamById(int $constructorId, $seasonId): TeamModel

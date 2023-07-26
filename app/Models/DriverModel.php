@@ -17,7 +17,6 @@ class DriverModel extends Model
 
     public const ID = 'id';
     public const LEAGUE_ID = 'league_id';
-    public const COMPETITION_ID = 'competition_id';
     public const NAME_DISCORD = 'name_discord';
     public const NAME_PSN = 'name_psn';
     public const NAME_INGAME = 'name_ingame';
@@ -35,7 +34,6 @@ class DriverModel extends Model
 
     protected $fillable = [
         self::LEAGUE_ID,
-        self::COMPETITION_ID,
         self::NAME_DISCORD,
         self::NAME_PSN,
         self::NAME_INGAME,
@@ -60,22 +58,12 @@ class DriverModel extends Model
         return $this->belongsTo(LeagueModel::class);
     }
 
-    public function competition(): BelongsToMany
-    {
-        return $this->belongsToMany(CompetitionModel::class);
-    }
-
     public function team(): HasOne
     {
         return $this->hasOne(TeamModel::class, TeamModel::DRIVER_ID);
     }
 
     public function getIdAttribute(): int
-    {
-        return $this->attributes[self::ID];
-    }
-
-    public function getCompetitionAttribute(): int
     {
         return $this->attributes[self::ID];
     }
