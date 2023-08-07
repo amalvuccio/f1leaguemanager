@@ -28,60 +28,6 @@ class StandingsService
             10 => 1067
         );
 
-        //Split A
-        $standings = array(
-            [
-                "name" => "RedBull",
-                "pos" => 8,
-                "points" => 14
-            ],
-            [
-                "name" => "McLaren",
-                "pos" => 2,
-                "points" => 31
-            ],
-            [
-                "name" => "Mercedes",
-                "pos" => 4,
-                "points" => 20
-            ],
-            [
-                "name" => "Alpine",
-                "pos" => 1,
-                "points" => 48
-            ],
-            [
-                "name" => "AstonMartin",
-                "pos" => 7,
-                "points" => 14
-            ],
-            [
-                "name" => "Williams",
-                "pos" => 9,
-                "points" => 7
-            ],
-            [
-                "name" => "Ferrari",
-                "pos" => 3,
-                "points" => 29
-            ],
-            [
-                "name" => "Haas",
-                "pos" => 10,
-                "points" => 0
-            ],
-            [
-                "name" => "AlphaTauri",
-                "pos" => 5,
-                "points" => 16
-            ],
-            [
-                "name" => "AlfaRomeo",
-                "pos" => 6,
-                "points" => 16
-            ],
-        );
-
         //Split B
         $standings = array(
             [
@@ -136,6 +82,60 @@ class StandingsService
             ],
         );
 
+        //Split A
+        $standings = array(
+            [
+                "name" => "RedBull",
+                "pos" => 4,
+                "points" => 25
+            ],
+            [
+                "name" => "McLaren",
+                "pos" => 5,
+                "points" => 18
+            ],
+            [
+                "name" => "Mercedes",
+                "pos" => 6,
+                "points" => 16
+            ],
+            [
+                "name" => "Alpine",
+                "pos" => 10,
+                "points" => -5
+            ],
+            [
+                "name" => "AstonMartin",
+                "pos" => 9,
+                "points" => 2
+            ],
+            [
+                "name" => "Williams",
+                "pos" => 3,
+                "points" => 25
+            ],
+            [
+                "name" => "Ferrari",
+                "pos" => 7,
+                "points" => 14
+            ],
+            [
+                "name" => "Haas",
+                "pos" => 2,
+                "points" => 36
+            ],
+            [
+                "name" => "AlphaTauri",
+                "pos" => 1,
+                "points" => 39
+            ],
+            [
+                "name" => "AlfaRomeo",
+                "pos" => 8,
+                "points" => 12
+            ],
+        );
+
         foreach ($standings as $team) {
             $teamBase = @imagecreatefrompng("../resources/documents/standings/teams/" . $team['name'] . ".png");
             $pointsBox = @imagecreatefrompng("../resources/documents/standings/PointsBox.png");
@@ -161,184 +161,6 @@ class StandingsService
             8 => 879,
             9 => 973,
             10 => 1067
-        );
-
-        //Split A
-        $standings = array(
-            1 => [
-                [
-                    "name" => "Clemente1804",
-                    "team" => "RedBull",
-                    "pos" => 2,
-                    "points" => 259
-                ],
-                [
-                    "name" => "Mlody_35",
-                    "team" => "AlphaTauri",
-                    "pos" => 4,
-                    "points" => 224
-                ],
-                [
-                    "name" => "Basti1997-TJ",
-                    "team" => "RedBull",
-                    "pos" => 1,
-                    "points" => 260
-                ],
-                [
-                    "name" => "Ronlu222",
-                    "team" => "McLaren",
-                    "pos" => 3,
-                    "points" => 236
-                ],
-                [
-                    "name" => "SBBela",
-                    "team" => "McLaren",
-                    "pos" => 6,
-                    "points" => 196
-                ],
-                [
-                    "name" => "Janosch077",
-                    "team" => "AstonMartin",
-                    "pos" => 10,
-                    "points" => 171
-                ],
-                [
-                    "name" => "Maxinator0904",
-                    "team" => "Mercedes",
-                    "pos" => 8,
-                    "points" => 182
-                ],
-                [
-                    "name" => "Dezin",
-                    "team" => "Alpine",
-                    "pos" => 5,
-                    "points" => 211
-                ],
-                [
-                    "name" => "LSjOM7",
-                    "team" => "Mercedes",
-                    "pos" => 7,
-                    "points" => 185
-                ],
-                [
-                    "name" => "Tizian",
-                    "team" => "Alpine",
-                    "pos" => 9,
-                    "points" => 171
-                ],
-            ],
-            2 => [
-                [
-                    "name" => "xbatchris",
-                    "team" => "Ferrari",
-                    "pos" => 3,
-                    "points" => 127
-                ],
-                [
-                    "name" => "ObNöKhEsLeZ",
-                    "team" => "Williams",
-                    "pos" => 1,
-                    "points" => 146
-                ],
-                [
-                    "name" => "ToniTempo",
-                    "team" => "AlfaRomeo",
-                    "pos" => 4,
-                    "points" => 103
-                ],
-                [
-                    "name" => "Nobbler1975",
-                    "team" => "AstonMartin",
-                    "pos" => 2,
-                    "points" => 137
-                ],
-                [
-                    "name" => "prefy",
-                    "team" => "Haas",
-                    "pos" => 5,
-                    "points" => 89
-                ],
-                [
-                    "name" => "HamburgerJung",
-                    "team" => "AlphaTauri",
-                    "pos" => 10,
-                    "points" => 61
-                ],
-                [
-                    "name" => "DMK160988",
-                    "team" => "Haas",
-                    "pos" => 6,
-                    "points" => 78
-                ],
-                [
-                    "name" => "Mathador1887",
-                    "team" => "Ferrari",
-                    "pos" => 7,
-                    "points" => 74
-                ],
-                [
-                    "name" => "willi87_94",
-                    "team" => "Williams",
-                    "pos" => 8,
-                    "points" => 65
-                ],
-                [
-                    "name" => "Julianus33",
-                    "team" => "AlfaRomeo",
-                    "pos" => 9,
-                    "points" => 62
-                ]
-            ],
-            3 => [
-                [
-                    "name" => "ag_323_ha",
-                    "team" => "EF",
-                    "pos" => 1,
-                    "points" => 42
-                ],
-                [
-                    "name" => "xPhilippFCB",
-                    "team" => "EF",
-                    "pos" => 4,
-                    "points" => 25
-                ],
-                [
-                    "name" => "SDC_Beesel",
-                    "team" => "EF",
-                    "pos" => 3,
-                    "points" => 31
-                ],
-                [
-                    "name" => "aka_scharfi_82",
-                    "team" => "EF",
-                    "pos" => 2,
-                    "points" => 41
-                ],
-                [
-                    "name" => "Ramrod",
-                    "team" => "EF",
-                    "pos" => 6,
-                    "points" => 5
-                ],
-                [
-                    "name" => "Riccihsv201",
-                    "team" => "EF",
-                    "pos" => 7,
-                    "points" => 5
-                ],
-                [
-                    "name" => "Dschoakim",
-                    "team" => "EF",
-                    "pos" => 8,
-                    "points" => 0
-                ],
-                [
-                    "name" => "Bayernfreaky",
-                    "team" => "EF",
-                    "pos" => 5,
-                    "points" => 18
-                ]
-            ]
         );
 
         //Split B
@@ -464,6 +286,142 @@ class StandingsService
                     "name" => "krl_Racer",
                     "team" => "AlphaTauri",
                     "pos" => 10,
+                    "points" => 0
+                ]
+            ]
+        );
+
+        //Split A
+        $standings = array(
+            1 => [
+                [
+                    "name" => "Bayernfreaky",
+                    "team" => "AlphaTauri",
+                    "pos" => 1,
+                    "points" => 26
+                ],
+                [
+                    "name" => "Mlody_35",
+                    "team" => "Haas",
+                    "pos" => 2,
+                    "points" => 22
+                ],
+                [
+                    "name" => "mika.ostfeld",
+                    "team" => "Haas",
+                    "pos" => 6,
+                    "points" => 14
+                ],
+                [
+                    "name" => "willi87_94",
+                    "team" => "Williams",
+                    "pos" => 3,
+                    "points" => 18
+                ],
+                [
+                    "name" => "LSjOM7",
+                    "team" => "Mercedes",
+                    "pos" => 4,
+                    "points" => 16
+                ],
+                [
+                    "name" => "Maxinator0904",
+                    "team" => "RedBull",
+                    "pos" => 5,
+                    "points" => 15
+                ],
+                [
+                    "name" => "xbatchris",
+                    "team" => "Ferrari",
+                    "pos" => 7,
+                    "points" => 14
+                ],
+                [
+                    "name" => "DMK160988",
+                    "team" => "AlphaTauri",
+                    "pos" => 8,
+                    "points" => 13
+                ],
+                [
+                    "name" => "Nobbler1975",
+                    "team" => "AlfaRomeo",
+                    "pos" => 9,
+                    "points" => 12
+                ],
+                [
+                    "name" => "SBBela",
+                    "team" => "McLaren",
+                    "pos" => 10,
+                    "points" => 11
+                ]
+            ],
+            2 => [
+                [
+                    "name" => "Basti1997-TJ",
+                    "team" => "RedBull",
+                    "pos" => 1,
+                    "points" => 10
+                ],
+                [
+                    "name" => "ObNöKhEsLeZ",
+                    "team" => "Williams",
+                    "pos" => 2,
+                    "points" => 7
+                ],
+                [
+                    "name" => "Ronlu222",
+                    "team" => "McLaren",
+                    "pos" => 3,
+                    "points" => 7
+                ],
+                [
+                    "name" => "NTS Kaimi",
+                    "team" => "EF",
+                    "pos" => 4,
+                    "points" => 7
+                ],
+                [
+                    "name" => "aka_scharfi_82",
+                    "team" => "Mercedes",
+                    "pos" => 5,
+                    "points" => 0
+                ],
+                [
+                    "name" => "Janosch077",
+                    "team" => "AlfaRomeo",
+                    "pos" => 6,
+                    "points" => 0
+                ],
+                [
+                    "name" => "Dezin",
+                    "team" => "AstonMartin",
+                    "pos" => 7,
+                    "points" => 0
+                ],
+                [
+                    "name" => "MrMartin",
+                    "team" => "Alpine",
+                    "pos" => 8,
+                    "points" => 0
+                ],
+                [
+                    "name" => "Clemente1804",
+                    "team" => "Ferrari",
+                    "pos" => 9,
+                    "points" => 0
+                ],
+                [
+                    "name" => "tiz_haa",
+                    "team" => "AstonMartin",
+                    "pos" => 10,
+                    "points" => 0
+                ]
+            ],
+            3 => [
+                [
+                    "name" => "Phil",
+                    "team" => "Alpine",
+                    "pos" => 1,
                     "points" => 0
                 ]
             ]
