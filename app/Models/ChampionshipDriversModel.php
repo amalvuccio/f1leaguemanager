@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class DriversChampionshipModel extends Model
+class ChampionshipDriversModel extends Model
 {
     use SoftDeletes;
     public const ID = 'id';
@@ -19,4 +19,12 @@ class DriversChampionshipModel extends Model
     public const DELETED_AT = 'deleted_at';
 
     protected $table = 'championship_drivers';
+
+    protected $fillable = [
+        self::LEAGUE_ID,
+        self::SEASON_ID,
+        self::DRIVER_ID,
+        self::RACE_ID,
+        self::POINTS
+    ];
 }

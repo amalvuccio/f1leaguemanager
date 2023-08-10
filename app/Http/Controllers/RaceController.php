@@ -18,6 +18,11 @@ class RaceController extends Controller
         $this->raceService = $raceService;
     }
 
+    public function details($seasonId, $calenderPos)
+    {
+        return $this->raceService->getRaceByCalenderPos();
+    }
+
     public function index($seasonId, Request $request): Collection
     {
         $query = RaceModel::query()->where(RaceModel::SEASON_ID, '=', $seasonId);

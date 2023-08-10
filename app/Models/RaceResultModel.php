@@ -118,17 +118,17 @@ class RaceResultModel extends Model
 
     public function getDriverAttribute()
     {
-        return $this->driver()->get();
+        return $this->driver()->first();
     }
 
     public function getRaceAttribute()
     {
-        return $this->race()->get();
+        return $this->race()->first();
     }
 
     public function getConstructorAttribute()
     {
-        return $this->constructor()->get();
+        return $this->constructor()->first();
     }
 
     public function getPosQualiAttribute(): string

@@ -76,7 +76,7 @@ class RaceModel extends Model
 
     public function getTrackAttribute()
     {
-        return $this->track()->get();
+        return $this->track()->first();
     }
 
     public function getIdAttribute(): int

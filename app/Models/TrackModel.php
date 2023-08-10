@@ -13,6 +13,8 @@ class TrackModel extends Model
     public const NAME = 'name';
     public const CITY = 'city';
     public const COUNTRY = 'country';
+
+    public const GP_NAME = 'gp_name';
     public const CREATED_AT = 'created_at';
     public const UPDATED_AT = 'updated_at';
     public const DELETED_AT = 'deleted_at';
@@ -23,7 +25,8 @@ class TrackModel extends Model
         self::ID,
         self::NAME,
         self::CITY,
-        self::COUNTRY
+        self::COUNTRY,
+        self::GP_NAME
     ];
 
     /**
@@ -35,5 +38,10 @@ class TrackModel extends Model
     public function newCollection(array $models = []): Utility_Collection
     {
         return new Utility_Collection($models);
+    }
+
+    public function getGPNameAttribute(): string
+    {
+        return $this->attributes[self::GP_NAME];
     }
 }

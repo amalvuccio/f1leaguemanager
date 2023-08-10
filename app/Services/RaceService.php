@@ -15,6 +15,11 @@ class RaceService
         return RaceModel::query()->where(RaceModel::SEASON_ID, "=", $seasonId)->orderBy(RaceModel::CALENDER_POS)->get();
     }
 
+    public function getRaceByCalenderPos($seasonId, $calenderPos)
+    {
+        return RaceModel::query()->where(RaceModel::SEASON_ID, '=', $seasonId)->where(RaceModel::CALENDER_POS, '=', $calenderPos)->first();
+    }
+
     public function getRaceByTrack($name): RaceModel
     {
         $race = RaceModel::query()->whereHas('track',

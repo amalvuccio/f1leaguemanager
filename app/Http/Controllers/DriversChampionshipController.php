@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DriversChampionshipModel;
+use App\Models\ChampionshipDriversModel;
 use Illuminate\Database\Eloquent\Collection;
 
 class DriversChampionshipController
@@ -13,6 +13,6 @@ class DriversChampionshipController
 
     public function index(): Collection
     {
-        return DriversChampionshipModel::all();
+        return ChampionshipDriversModel::all();
     }
 }

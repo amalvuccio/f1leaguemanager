@@ -61,6 +61,8 @@ Route::post( 'seasons', [SeasonController::class, 'create']);
  */
 Route::get( 'seasons/{seasonId}/races', [RaceController::class, 'index']);
 Route::post( 'seasons/{seasonId}/races', [RaceController::class, 'create']);
+Route::get( 'seasons/{seasonId}/races/{calenderPos}', [RaceController::class, 'details']);
+
 
 /**
  * race results routes
@@ -111,6 +113,7 @@ Route::get( '/tracks', [TrackController::class, 'index']);
  * standings routes
  */
 Route::get( '/standings', [StandingsController::class, 'index']);
+Route::get( '/standings/{id}', [StandingsController::class, 'details']);
 Route::get( '/standingsDrivers', [StandingsController::class, 'getDriverStandings']);
 
 

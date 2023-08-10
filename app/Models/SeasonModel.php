@@ -49,7 +49,7 @@ class SeasonModel extends Model
 
     public function championshipDrivers(): HasMany
     {
-        return $this->hasMany(DriversChampionshipModel::class, DriversChampionshipModel::SEASON_ID);
+        return $this->hasMany(ChampionshipDriversModel::class, ChampionshipDriversModel::SEASON_ID);
     }
 
     public function championshipTeams(): HasMany
